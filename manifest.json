@@ -5,7 +5,7 @@
   "Description": "Build and place anything anywhere.",
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",
-  "MinimumApiVersion": "4.0.0",
+  "MinimumApiVersion": "4.1.0",
   "MinimumGameVersion": "1.6.13",
     "UpdateKeys": [ "Nexus:21233", "GitHub:Sparky56p/AnythingAnywhere" ],
   "Dependencies": [
