@@ -15,7 +15,7 @@ internal static class UpgradeHelper
 
     private static void OfferCabinUpgrade(string cabin)
     {
-        var cabinBuilding = Game1.getLocationFromName(cabin).GetContainingBuilding();
+        var cabinBuilding = Game1.getLocationFromName(cabin).ParentBuilding;
         var cabinInstance = (Cabin)cabinBuilding.indoors.Value;
 
         string msg;
@@ -46,7 +46,7 @@ internal static class UpgradeHelper
 
     private static void AcceptCabinUpgrade(string cabin)
     {
-        var cabinBuilding = Game1.getLocationFromName(cabin).GetContainingBuilding();
+        var cabinBuilding = Game1.getLocationFromName(cabin).ParentBuilding;
         var cabinInstance = (Cabin)cabinBuilding.indoors.Value;
 
         if (cabinInstance == null)

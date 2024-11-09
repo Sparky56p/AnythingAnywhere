@@ -116,7 +116,7 @@ internal static class ConsoleCommands
             return;
         }
 
-        Building? cabinBuilding = Game1.player.currentLocation.GetContainingBuilding();
+        Building? cabinBuilding = Game1.player.currentLocation.ParentBuilding;
         Cabin? cabinInstance = null;
         if (cabinBuilding is { isCabin: true })
             cabinInstance = (Cabin)cabinBuilding.indoors.Value;
@@ -179,7 +179,7 @@ internal static class ConsoleCommands
             return;
         }
 
-        var cabinBuilding = Game1.player.currentLocation.GetContainingBuilding();
+        var cabinBuilding = Game1.player.currentLocation.ParentBuilding;
         Cabin? cabinInstance = null;
         if (cabinBuilding.isCabin)
             cabinInstance = (Cabin)cabinBuilding.indoors.Value;

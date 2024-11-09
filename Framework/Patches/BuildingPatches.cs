@@ -78,7 +78,7 @@ internal sealed class BuildingPatches : PatchHelper
         Building destroyed;
         GameLocation interior;
         Cabin? cabin;
-        if (__instance.demolishing)
+        if (__instance.Action is CarpenterMenu.CarpentryAction.Demolish)
         {
             farm = __instance.TargetLocation;
             destroyed = farm.getBuildingAt(new Vector2((float)(Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (float)(Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64));
@@ -125,7 +125,7 @@ internal sealed class BuildingPatches : PatchHelper
             return false;
         }
 
-        if (__instance.upgrading)
+        if (__instance.Action is CarpenterMenu.CarpentryAction.Upgrade)
         {
             Building toUpgrade = __instance.TargetLocation.getBuildingAt(new Vector2((float)(Game1.viewport.X + Game1.getOldMouseX(ui_scale: false)) / 64, (float)(Game1.viewport.Y + Game1.getOldMouseY(ui_scale: false)) / 64));
             if (toUpgrade != null && toUpgrade.buildingType.Value == __instance.Blueprint.UpgradeFrom)
@@ -157,10 +157,10 @@ internal sealed class BuildingPatches : PatchHelper
             return false;
         }
 
-        if (__instance.painting)
+        if (__instance.Action is CarpenterMenu.CarpentryAction.Paint)
             return true;
 
-        if (__instance.moving)
+        if (__instance.Action is CarpenterMenu.CarpentryAction.Move)
             return true;
 
         Game1.player.team.buildLock.RequestLock(delegate
@@ -188,7 +188,7 @@ internal sealed class BuildingPatches : PatchHelper
 
         void BuildingLockFailed()
         {
-            if (__instance.demolishing)
+            if (__instance.Action is CarpenterMenu.CarpentryAction.Demolish)
             {
                 Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_LockFailed"), 3));
             }
@@ -196,7 +196,7 @@ internal sealed class BuildingPatches : PatchHelper
 
         void ContinueDemolish()
         {
-            if (!__instance.demolishing || !farm.buildings.Contains(destroyed)) return;
+            if (!__instance.Action.Equals(CarpenterMenu.CarpentryAction.Demolish) || !farm.buildings.Contains(destroyed)) return;
 
             if (destroyed.daysOfConstructionLeft.Value > 0 || destroyed.daysUntilUpgrade.Value > 0)
             {

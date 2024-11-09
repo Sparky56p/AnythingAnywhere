@@ -21,7 +21,7 @@ internal static class RenovationHelper
 
     private static void ShowRenovationMenuAtLocation(string cabin)
     {
-        var cabinBuilding = Game1.getLocationFromName(cabin).GetContainingBuilding();
+        var cabinBuilding = Game1.getLocationFromName(cabin).ParentBuilding;
         var cabinInstance = (Cabin)cabinBuilding.indoors.Value;
 
         Game1.activeClickableMenu = new ShopMenu("HouseRenovations", GetAvailableRenovationsForFarmer(cabinInstance.owner), 0, null, OnPurchaseRenovation)
