@@ -1,13 +1,13 @@
 {
   "Name": "Anything Anywhere",
   "Author": "Espy",
-  "Version": "1.8.2",
+  "Version": "1.8.2-unofficial.1-Sparky56p",
   "Description": "Build and place anything anywhere.",
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",
   "MinimumApiVersion": "4.0.0",
-  "MinimumGameVersion": "1.6.8",
-  "UpdateKeys": [ "Nexus:21233" ],
+  "MinimumGameVersion": "1.6.13",
+    "UpdateKeys": [ "Nexus:21233", "GitHub:Sparky56p/AnythingAnywhere" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
