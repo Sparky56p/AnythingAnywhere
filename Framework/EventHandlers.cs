@@ -278,7 +278,8 @@ internal static class EventHandlers
             return;
         }
 
-        bool magicInkCheck = !(Game1.getFarmer(Game1.player.UniqueMultiplayerID).hasMagicInk || ModEntry.Config.BypassMagicInk);
+        bool magicInkCheck = !((Game1.GetPlayer(Game1.player.UniqueMultiplayerID, onlyOnline: true) ?? Game1.MasterPlayer).hasMagicInk || ModEntry.Config.BypassMagicInk);
+
         if (builder == "Wizard" && magicInkCheck && !ModEntry.Config.EnableInstantBuild)
         {
             Game1.addHUDMessage(new HUDMessage(I18n.Message("NoMagicInk"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
