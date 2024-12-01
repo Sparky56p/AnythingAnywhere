@@ -1,58 +1,123 @@
 {
   // 家具配置
   "Config.AnythingAnywhere.Placing.Title": "放置",
-  "Config.AnythingAnywhere.EnablePlacing.Name": "启用放置",
+
+  "Config.AnythingAnywhere.EnablePlacing.Name": "启用放置功能",
   "Config.AnythingAnywhere.EnablePlacing.Description": "允许在任何位置放置物品.(例如家具、箱子等)",
+
   "Config.AnythingAnywhere.EnablePlaceAnywhere.Name": "自由放置",
   "Config.AnythingAnywhere.EnablePlaceAnywhere.Description": "允许在任何位置放置家具,甚至在墙上.",
+
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Name": "地毯移除绕过",
   "Config.AnythingAnywhere.EnableRugRemovalBypass.Description": "允许移除带有家具的地毯.",
+
   "Config.AnythingAnywhere.EnableWallFurnitureIndoors.Name": "室内墙壁家具",
-  "Config.AnythingAnywhere.EnableWallFurnitureIndoors.Description": "允许在可装饰的室内任何位置放置墙壁家具.",
+  "Config.AnythingAnywhere.EnableWallFurnitureIndoors.Description": "允许在可装饰的室内任何地点放置墙壁家具.",
 
   // 建筑配置
   "Config.AnythingAnywhere.Building.Title": "建筑",
-  "Config.AnythingAnywhere.EnableBuilding.Name": "启用建筑",
-  "Config.AnythingAnywhere.EnableBuilding.Description": "启用此模组的建筑功能.",
-  "Config.AnythingAnywhere.EnableBuildAnywhere.Name": "任意建造",
-  "Config.AnythingAnywhere.EnableBuildAnywhere.Description": "允许在任何位置建造,甚至在墙上.",
 
-  "Config.AnythingAnywhere.BuildMenu.Name": "任意建造菜单",
-  "Config.AnythingAnywhere.BuildMenu.Description": "在任何地方打开木匠菜单.",
-  "Config.AnythingAnywhere.WizardBuildMenu.Name": "巫师建造菜单",
-  "Config.AnythingAnywhere.WizardBuildMenu.Description": "在任何地方打开巫师建造菜单.",
-  "Config.AnythingAnywhere.BuildModifier.Name": "建造修改键",
+  "Config.AnythingAnywhere.EnableBuilding.Name": "启用建筑功能",
+  "Config.AnythingAnywhere.EnableBuilding.Description": "启用此模组的建筑功能.",
+
+  "Config.AnythingAnywhere.EnableBuildAnywhere.Name": "任意地点建造",
+  "Config.AnythingAnywhere.EnableBuildAnywhere.Description": "允许在任何地点建造,甚至在墙上.",
+
+  "Config.AnythingAnywhere.EnableInstantBuild.Name": "建筑立即建造",
+  "Config.AnythingAnywhere.EnableInstantBuild.Description": "使建筑立即建造完成.",
+
+  "Config.AnythingAnywhere.EnableFreeBuild.Name": "建筑免费建造",
+  "Config.AnythingAnywhere.EnableFreeBuild.Description": "将建筑建造成本设置为免费.",
+
+  "Config.AnythingAnywhere.BuildMenu.Name": "木匠商店建造菜单",
+  "Config.AnythingAnywhere.BuildMenu.Description": "在任何地方打开木匠商店建筑菜单.",
+
+  "Config.AnythingAnywhere.WizardBuildMenu.Name": "巫师商店建造菜单",
+  "Config.AnythingAnywhere.WizardBuildMenu.Description": "在任何地方打开巫师商店建筑菜单.",
+
+  "Config.AnythingAnywhere.BuildModifier.Name": "建造修改快捷键",
   "Config.AnythingAnywhere.BuildModifier.Description": "在放置、拆除或升级建筑时按住该键,将不会返回建造菜单.",
-  "Config.AnythingAnywhere.EnableGreenhouse.Name": "启用温室",
+
+  "Config.AnythingAnywhere.EnableGreenhouse.Name": "启用温室建造",
   "Config.AnythingAnywhere.EnableGreenhouse.Description": "使温室可以建造.",
-  "Config.AnythingAnywhere.RemoveBuildConditions.Name": "移除建造条件",
-  "Config.AnythingAnywhere.RemoveBuildConditions.Description": "移除大多数蓝图的建造条件.",
-  "Config.AnythingAnywhere.EnableBuildingIndoors.Name": "室内建筑",
-  "Config.AnythingAnywhere.EnableBuildingIndoors.Description": "在室内进行建筑.",
-  "Config.AnythingAnywhere.BypassMagicInk.Name": "魔法墨水绕过",
-  "Config.AnythingAnywhere.BypassMagicInk.Description": "跳过魔法墨水检查.",
+
+  "Config.AnythingAnywhere.RemoveBuildConditions.Name": "移除建造的成本",
+  "Config.AnythingAnywhere.RemoveBuildConditions.Description": "移除大多数蓝图的建造成本.",
+
+  "Config.AnythingAnywhere.EnableBuildingIndoors.Name": "室内建造建筑物",
+  "Config.AnythingAnywhere.EnableBuildingIndoors.Description": "在室内进行建造建筑物.",
+
+  "Config.AnythingAnywhere.BypassMagicInk.Name": "魔法墨水条件绕过",
+  "Config.AnythingAnywhere.BypassMagicInk.Description": "跳过魔法墨水的需求开放巫师建筑商店.",
 
   // 农业配置
   "Config.AnythingAnywhere.Farming.Title": "农业",
-  "Config.AnythingAnywhere.EnableFarmingAnywhere.Name": "启用耕作",
-  "Config.AnythingAnywhere.EnableFarmingAnywhere.Description": "允许在任何位置进行耕作.",
-  "Config.AnythingAnywhere.EnableDiggingAll.Name": "任意锄地",
+
+  "Config.AnythingAnywhere.EnableFarmingAnywhere.Name": "启用农业功能",
+  "Config.AnythingAnywhere.EnableFarmingAnywhere.Description": "允许在任何位置进行耕种.",
+
+  "Config.AnythingAnywhere.EnableCropsAnytime.Name": "作物全季节生长",
+  "Config.AnythingAnywhere.EnableCropsAnytime.Description": "取消对作物生长的限制,让它们在任何季节都能生长.",
+
+  "Config.AnythingAnywhere.EnableTreesAnytime.Name": "树木全季节生长",
+  "Config.AnythingAnywhere.EnableTreesAnytime.Description": "取消对树木/果树的限制,让它们在任意季节都能生产.",
+
+  "Config.AnythingAnywhere.EnableBushesAnytime.Name": "灌木丛全季节产出",
+  "Config.AnythingAnywhere.EnableBushesAnytime.Description": "取消对灌木丛的限制,让它们在任意季节都能生成产物.",
+
+  "Config.AnythingAnywhere.EnableDiggingAll.Name": "任意地点锄地",
   "Config.AnythingAnywhere.EnableDiggingAll.Description": "允许使用工具锄任何地块.",
-  "Config.AnythingAnywhere.EnableFruitTreeTweaks.Name": "果树调整",
+
+  "Config.AnythingAnywhere.EnableFruitTreeTweaks.Name": "果树生长调整",
   "Config.AnythingAnywhere.EnableFruitTreeTweaks.Description": "移除果树的生长限制.",
+
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Name": "野生树木调整",
   "Config.AnythingAnywhere.EnableWildTreeTweaks.Description": "移除野生树木的生长限制.这将使游戏木材资源快速失控.",
 
-  // 其他配置
-  "Config.AnythingAnywhere.Misc.Title": "其他",
-  "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "木桶调整",
-  "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "在任何地方启用木桶功能.",
+  "Config.AnythingAnywhere.ForceGreenhouseTreeSprite.Name": "温室树木调整",
+  "Config.AnythingAnywhere.ForceGreenhouseTreeSprite.Description": "当玩家启用'EnableTreesAnytime 任意季节的树木'时,这将使温室中的树木具有相同效果.",
+
+  // 房屋配置
+  "Config.AnythingAnywhere.House.Title": "房屋",
+
+  "Config.AnythingAnywhere.DisableHardCodedWarp.Name": "移除硬编码传送",
+  "Config.AnythingAnywhere.DisableHardCodedWarp.Description": "移除农舍里的硬编码传送.",
+
+  "Config.AnythingAnywhere.InstantHomeUpgrade.Name": "房屋立即升级",
+  "Config.AnythingAnywhere.InstantHomeUpgrade.Description": "农舍/联机小屋能瞬间升级完成.",
+
+  "Config.AnythingAnywhere.UpgradeCabins.Name": "升级联机小屋",
+  "Config.AnythingAnywhere.UpgradeCabins.Description": "让玩家从罗宾木匠商店处升级联机小屋.",
+
+  "Config.AnythingAnywhere.RenovateCabins.Name": "装修联机小屋",
+  "Config.AnythingAnywhere.RenovateCabins.Description": "让玩家从罗宾木匠商店处装修联机小屋.",
+
+  "Config.AnythingAnywhere.CabinMenuButton.Name": "联机小屋菜单",
+  "Config.AnythingAnywhere.CabinMenuButton.Description": "如果因使用模组冲突而无法使用罗宾的菜单,则打开联机小屋菜单快捷键以'upgrade 升级/renovate 装修'联机小屋.",
+
+  "Config.AnythingAnywhere.EnableFreeHouseUpgrade.Name": "免费房屋升级",
+  "Config.AnythingAnywhere.EnableFreeHouseUpgrade.Description": "使房屋升级全项免费.",
+
+  "Config.AnythingAnywhere.EnableFreeRenovations.Name": "免费房屋装修",
+  "Config.AnythingAnywhere.EnableFreeRenovations.Description": "使房屋装修全项免费.",
+
+  // 其它配置
+  "Config.AnythingAnywhere.Misc.Title": "其它",
+
+  "Config.AnythingAnywhere.EnableCaskFunctionality.Name": "陈酿酒桶调整",
+  "Config.AnythingAnywhere.EnableCaskFunctionality.Description": "在任何地方启用陈酿酒桶功能.",
+
+  "Config.AnythingAnywhere.EnableFreeCommunityUpgrade.Name": "免费社区升级",
+  "Config.AnythingAnywhere.EnableFreeCommunityUpgrade.Description": "免费升级社区中心.",
+
   "Config.AnythingAnywhere.EnableJukeboxFunctionality.Name": "点唱机调整",
-  "Config.AnythingAnywhere.EnableJukeboxFunctionality.Description": "在任何地方启用点唱机功能.（在下雨时除外）",
-  "Config.AnythingAnywhere.EnableGoldClockAnywhere.Name": "金色时钟调整",
-  "Config.AnythingAnywhere.EnableGoldClockAnywhere.Description": "在任何地方启用金色时钟功能.",
-  "Config.AnythingAnywhere.MultipleMiniObelisks.Name": "多个小方尖碑",
-  "Config.AnythingAnywhere.MultipleMiniObelisks.Description": "允许在每个位置放置超过2个小方尖碑.",
+  "Config.AnythingAnywhere.EnableJukeboxFunctionality.Description": "在任何地方启用点唱机功能.(在下雨时除外)",
+
+  "Config.AnythingAnywhere.EnableGoldClockAnywhere.Name": "黄金钟调整",
+  "Config.AnythingAnywhere.EnableGoldClockAnywhere.Description": "在任何地方启用黄金钟功能.",
+
+  "Config.AnythingAnywhere.MultipleMiniObelisks.Name": "多个方尖碑",
+  "Config.AnythingAnywhere.MultipleMiniObelisks.Description": "允许在每个位置放置超过2个方尖碑.",
 
   // 重置页面按钮
   "Config.AnythingAnywhere.ResetPage.Button": "重置页面",
@@ -60,34 +125,11 @@
   // 可建地点按钮
   "Config.AnythingAnywhere.BlacklistedLocations.Title": "隐藏位置",
   "Config.AnythingAnywhere.BlacklistedLocations.Button": "当前位置",
-  "Config.AnythingAnywhere.BlacklistedLocations.Description": "防止当前位置出现在罗宾菜单中.",
+  "Config.AnythingAnywhere.BlacklistedLocations.Description": "防止当前位置出现在罗宾木匠商店菜单中.",
 
   // 玩家消息
-  "Message.AnythingAnywhere.NoBuildingIndoors": "禁用了室内建筑",
-  "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}} 无法移动到另一张地图.",
-  "Message.AnythingAnywhere.NoMagicInk": "您需要魔法墨水才能打开巫师的建造菜单.",
-
-  // 注释 (尽我之力)
-  "Config.AnythingAnywhere.EnableInstantBuild.Name": "即时建造",
-  "Config.AnythingAnywhere.EnableInstantBuild.Description": "启用即时建造.",
-  "Config.AnythingAnywhere.EnableFreeBuild.Name": "免费建造",
-  "Config.AnythingAnywhere.EnableFreeBuild.Description": "将建造成本设置为免费.",
-
+  "Message.AnythingAnywhere.NoBuildingIndoors": "禁用室内建筑",
   "Message.AnythingAnywhere.NoBuildingInInstancedLocations": "在此处建造的建筑物无法正确保存.",
-  "Config.AnythingAnywhere.EnableCropsAnytime.Name": "任何季节都能生长",
-  "Config.AnythingAnywhere.EnableCropsAnytime.Description": "取消对作物生长的限制,让它们在任何季节都能生长.",
-  "Config.AnythingAnywhere.UpgradeCabins.Name": "升级联机小屋",
-  "Config.AnythingAnywhere.UpgradeCabins.Description": "让玩家从罗宾木匠商店处升级联机小屋.",
-  "Config.AnythingAnywhere.RenovateCabins.Name": "翻新联机小屋",
-  "Config.AnythingAnywhere.RenovateCabins.Description": "让玩家从罗宾木匠商店处翻新联机小屋.",
-  "Config.AnythingAnywhere.InstantHomeUpgrade.Name": "房屋即时升级",
-  "Config.AnythingAnywhere.InstantHomeUpgrade.Description": "农舍/联机小屋能瞬间升级.",
-  "Config.AnythingAnywhere.ForceGreenhouseTreeSprite.Name": "温室树木纹理",
-  "Config.AnythingAnywhere.ForceGreenhouseTreeSprite.Description": "当玩家启用'EnableTreesAnytime 随时启用树木'时,这将使树木纹理具有温室纹理.",
-  "Config.AnythingAnywhere.CabinMenuButton.Name": "联机小屋菜单",
-  "Config.AnythingAnywhere.CabinMenuButton.Description": "如果因使用模组冲突而无法使用罗宾的菜单,则打开菜单以'upgrade 升级/renovate 翻新'联机小屋.",
-  "Config.AnythingAnywhere.EnableTreesAnytime.Name": "任意季节的树木",
-  "Config.AnythingAnywhere.EnableTreesAnytime.Description": "取消对果树的限制,让它们在任意季节都能生产.",
-  "Config.AnythingAnywhere.EnableBushesAnytime.Name": "任意季节的灌木丛",
-  "Config.AnythingAnywhere.EnableBushesAnytime.Description": "取消对灌木丛的限制,让它们在任意季节都能生产."
+  "Message.AnythingAnywhere.NoMovingBuildingLocation": "{{buildingName}}无法移动到另一张地图.",
+  "Message.AnythingAnywhere.NoMagicInk": "玩家需要魔法墨水才能打开巫师的建造菜单."
 }
