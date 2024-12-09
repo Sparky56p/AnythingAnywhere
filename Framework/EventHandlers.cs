@@ -15,352 +15,401 @@ using System.Linq;
 using AnythingAnywhere.Framework.Helpers;
 using AnythingAnywhere.Framework.Utilities;
 
-namespace AnythingAnywhere.Framework;
-internal static class EventHandlers
+namespace AnythingAnywhere.Framework
 {
-    private static bool _buildingConfigChanged;
-    private static bool _renovationConfigChanged;
-
-    #region Event Subscriptions
-    internal static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
+    internal static class EventHandlers
     {
-        ResetBlacklist(true);
-    }
+        private static bool _buildingConfigChanged;
+        private static bool _renovationConfigChanged;
 
-    internal static void OnBuildingListChanged(object? sender, BuildingListChangedEventArgs e)
-    {
-        if (e.Added.Any())
+        #region Event Subscriptions
+        internal static void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
         {
-            ResetBlacklist(true); // For multiplayer
-        }
-    }
-
-    internal static void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
-    {
-        if (!Context.IsWorldReady || !ModEntry.Config.EnableBuilding)
-            return;
-
-        if (ModEntry.Config.BuildMenu!.JustPressed() && ModEntry.Config.EnableBuilding)
-            HandleBuildButtonPress("Robin");
-
-        if (ModEntry.Config.WizardBuildMenu!.JustPressed() && ModEntry.Config.EnableBuilding)
-            HandleBuildButtonPress("Wizard");
-
-        if (ModEntry.Config.CabinMenuButton!.JustPressed() && Game1.IsMasterGame)
-            HandleCabinMenuButtonPress();
-    }
-
-    internal static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
-    {
-        if (e.Name.IsEquivalentTo("Data/Buildings"))
-        {
-            e.Edit(
-                asset =>
-                {
-                    var data = asset.AsDictionary<string, BuildingData>().Data;
-                    foreach (var buildingDataKey in data.Keys.ToList())
-                    {
-                        data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], ModEntry.Config.EnableFreeBuild, ModEntry.Config.EnableInstantBuild, ModEntry.Config.RemoveBuildConditions, ModEntry.Config.EnableGreenhouse);
-                    }
-                }, AssetEditPriority.Late);
+            ResetBlacklist(true);
         }
 
-        if (e.Name.IsEquivalentTo("Data/HomeRenovations"))
+        internal static void OnBuildingListChanged(object? sender, BuildingListChangedEventArgs e)
         {
-            e.Edit(
-                asset =>
-                {
-                    var data = asset.AsDictionary<string, HomeRenovation>().Data;
-                    foreach (var renovationDataKey in data.Keys.ToList())
-                    {
-                        data[renovationDataKey] = ModifyHomeRenovationData(data[renovationDataKey], ModEntry.Config.EnableFreeRenovations);
-                    }
-                }, AssetEditPriority.Late);
-        }
-    }
-
-    internal static void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
-    {
-        if (_buildingConfigChanged)
-        {
-            ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
-            _buildingConfigChanged = false;
-        }
-
-        if (_renovationConfigChanged)
-        {
-            ModEntry.ModHelper.GameContent.InvalidateCache("Data/HomeRenovations");
-            _renovationConfigChanged = false;
-        }
-    }
-
-    internal static void OnWarped(object? sender, WarpedEventArgs e)
-    {
-        if (!ModEntry.Config.DisableHardCodedWarp)
-            return;
-
-        if (e.OldLocation.Name.StartsWith("ScienceHouse") || e.OldLocation.Name.EndsWith("ScienceHouse") || e.OldLocation.IsOutdoors) return;
-        if (e.OldLocation is Cellar or FarmHouse or Cabin || (e.NewLocation is not FarmHouse && e.OldLocation is not Cabin)) return;
-
-        Game1.player.Position = CabinAndHousePatches.FarmHouseRealPos * 64f;
-        Game1.xLocationAfterWarp = Game1.player.TilePoint.X;
-        Game1.yLocationAfterWarp = Game1.player.TilePoint.Y;
-    }
-
-    internal static void OnDayEnding(object? sender, DayEndingEventArgs e)
-    {
-        if (!Context.IsMainPlayer)
-            return;
-
-        foreach (var offlineFarmhand in Game1.getOfflineFarmhands())
-        {
-            if (offlineFarmhand.daysUntilHouseUpgrade.Value <= 0)
-                continue;
-            offlineFarmhand.daysUntilHouseUpgrade.Value--;
-            if (offlineFarmhand.daysUntilHouseUpgrade.Value > 0)
-                continue;
-            FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(offlineFarmhand);
-            homeOfFarmer.moveObjectsForHouseUpgrade(offlineFarmhand.HouseUpgradeLevel + 1);
-            offlineFarmhand.HouseUpgradeLevel++;
-            offlineFarmhand.daysUntilHouseUpgrade.Value = -1;
-            homeOfFarmer.setMapForUpgradeLevel(offlineFarmhand.HouseUpgradeLevel);
-            Game1.stats.checkForBuildingUpgradeAchievements();
-            offlineFarmhand.autoGenerateActiveDialogueEvent("houseUpgrade_" + offlineFarmhand.HouseUpgradeLevel);
-        }
-    }
-
-    internal static void OnConfigChanged(object? sender, ConfigChangedEventArgs e)
-    {
-        if (Equals(e.OldValue, e.NewValue)) return;
-
-        switch (e.ConfigName)
-        {
-            case nameof(ModConfig.EnableFreeBuild):
-            case nameof(ModConfig.EnableInstantBuild):
-            case nameof(ModConfig.RemoveBuildConditions):
-            case nameof(ModConfig.EnableGreenhouse):
-                _buildingConfigChanged = true;
-                break;
-            case nameof(ModConfig.EnableFreeRenovations):
-                _renovationConfigChanged = true;
-                break;
-        }
-    }
-
-    internal static void OnClick(ButtonClickEventData e)
-    {
-        if (e.FieldID.Equals("BlacklistCurrentLocation"))
-        {
-            if (!Context.IsWorldReady)
+            if (e.Added.Any())
             {
-                Game1.playSound("thudStep");
+                ResetBlacklist(true); // For multiplayer
             }
-            else if (Game1.player.currentLocation.IsFarm)
+        }
+
+        internal static void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
+        {
+            if (!Context.IsWorldReady || !ModEntry.Config.EnableBuilding)
             {
-                Game1.playSound("thudStep");
+                return;
             }
-            else if (ModEntry.Config.BlacklistedLocations!.Contains(Game1.player.currentLocation.NameOrUniqueName))
+
+            if (ModEntry.Config.BuildMenu!.JustPressed() && ModEntry.Config.EnableBuilding)
             {
-                Game1.playSound("thudStep");
+                HandleBuildButtonPress("Robin");
+            }
+
+            if (ModEntry.Config.WizardBuildMenu!.JustPressed() && ModEntry.Config.EnableBuilding)
+            {
+                HandleBuildButtonPress("Wizard");
+            }
+
+            if (ModEntry.Config.CabinMenuButton!.JustPressed() && Game1.IsMasterGame)
+            {
+                HandleCabinMenuButtonPress();
+            }
+        }
+
+        internal static void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+        {
+            if (e.Name.IsEquivalentTo("Data/Buildings"))
+            {
+                e.Edit(
+                    asset =>
+                    {
+                        IDictionary<string, BuildingData> data = asset.AsDictionary<string, BuildingData>().Data;
+                        foreach (string? buildingDataKey in data.Keys.ToList())
+                        {
+                            data[buildingDataKey] = ModifyBuildingData(data[buildingDataKey], ModEntry.Config.EnableFreeBuild, ModEntry.Config.EnableInstantBuild, ModEntry.Config.RemoveBuildConditions, ModEntry.Config.EnableGreenhouse);
+                        }
+                    }, AssetEditPriority.Late);
+            }
+
+            if (e.Name.IsEquivalentTo("Data/HomeRenovations"))
+            {
+                e.Edit(
+                    asset =>
+                    {
+                        IDictionary<string, HomeRenovation> data = asset.AsDictionary<string, HomeRenovation>().Data;
+                        foreach (string? renovationDataKey in data.Keys.ToList())
+                        {
+                            data[renovationDataKey] = ModifyHomeRenovationData(data[renovationDataKey], ModEntry.Config.EnableFreeRenovations);
+                        }
+                    }, AssetEditPriority.Late);
+            }
+        }
+
+        internal static void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
+        {
+            if (_buildingConfigChanged)
+            {
+                ModEntry.ModHelper.GameContent.InvalidateCache("Data/Buildings");
+                _buildingConfigChanged = false;
+            }
+
+            if (_renovationConfigChanged)
+            {
+                ModEntry.ModHelper.GameContent.InvalidateCache("Data/HomeRenovations");
+                _renovationConfigChanged = false;
+            }
+        }
+
+        internal static void OnWarped(object? sender, WarpedEventArgs e)
+        {
+            if (!ModEntry.Config.DisableHardCodedWarp)
+            {
+                return;
+            }
+
+            if (e.OldLocation.Name.StartsWith("ScienceHouse") || e.OldLocation.Name.EndsWith("ScienceHouse") || e.OldLocation.IsOutdoors)
+            {
+                return;
+            }
+
+            if (e.OldLocation is Cellar or FarmHouse or Cabin || (e.NewLocation is not FarmHouse && e.OldLocation is not Cabin))
+            {
+                return;
+            }
+
+            Game1.player.Position = CabinAndHousePatches.FarmHouseRealPos * 64f;
+            Game1.xLocationAfterWarp = Game1.player.TilePoint.X;
+            Game1.yLocationAfterWarp = Game1.player.TilePoint.Y;
+        }
+
+        internal static void OnDayEnding(object? sender, DayEndingEventArgs e)
+        {
+            if (!Context.IsMainPlayer)
+            {
+                return;
+            }
+
+            foreach (Farmer? offlineFarmhand in Game1.getOfflineFarmhands())
+            {
+                if (offlineFarmhand.daysUntilHouseUpgrade.Value <= 0)
+                {
+                    continue;
+                }
+
+                offlineFarmhand.daysUntilHouseUpgrade.Value--;
+                if (offlineFarmhand.daysUntilHouseUpgrade.Value > 0)
+                {
+                    continue;
+                }
+
+                FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(offlineFarmhand);
+                homeOfFarmer.moveObjectsForHouseUpgrade(offlineFarmhand.HouseUpgradeLevel + 1);
+                offlineFarmhand.HouseUpgradeLevel++;
+                offlineFarmhand.daysUntilHouseUpgrade.Value = -1;
+                homeOfFarmer.setMapForUpgradeLevel(offlineFarmhand.HouseUpgradeLevel);
+                Game1.stats.checkForBuildingUpgradeAchievements();
+                offlineFarmhand.autoGenerateActiveDialogueEvent("houseUpgrade_" + offlineFarmhand.HouseUpgradeLevel);
+            }
+        }
+
+        internal static void OnConfigChanged(object? sender, ConfigChangedEventArgs e)
+        {
+            if (Equals(e.OldValue, e.NewValue))
+            {
+                return;
+            }
+
+            switch (e.ConfigName)
+            {
+                case nameof(ModConfig.EnableFreeBuild):
+                case nameof(ModConfig.EnableInstantBuild):
+                case nameof(ModConfig.RemoveBuildConditions):
+                case nameof(ModConfig.EnableGreenhouse):
+                    _buildingConfigChanged = true;
+                    break;
+                case nameof(ModConfig.EnableFreeRenovations):
+                    _renovationConfigChanged = true;
+                    break;
+            }
+        }
+
+        internal static void OnClick(ButtonClickEventData e)
+        {
+            if (e.FieldID.Equals("BlacklistCurrentLocation"))
+            {
+                if (!Context.IsWorldReady)
+                {
+                    Game1.playSound("thudStep");
+                }
+                else if (Game1.player.currentLocation.IsFarm)
+                {
+                    Game1.playSound("thudStep");
+                }
+                else if (ModEntry.Config.BlacklistedLocations!.Contains(Game1.player.currentLocation.NameOrUniqueName))
+                {
+                    Game1.playSound("thudStep");
+                }
+                else
+                {
+                    Game1.playSound("backpackIN");
+                    ModEntry.Config.BlacklistedLocations.Add(Game1.player.currentLocation.NameOrUniqueName);
+                    if (Game1.player.currentLocation.IsBuildableLocation())
+                    {
+                        Game1.currentLocation.Map.Properties.Remove("CanBuildHere");
+                    }
+                }
             }
             else
             {
                 Game1.playSound("backpackIN");
-                ModEntry.Config.BlacklistedLocations.Add(Game1.player.currentLocation.NameOrUniqueName);
-                if (Game1.player.currentLocation.IsBuildableLocation())
+                ConfigUtility.InitializeDefaultConfig(ModEntry.Config, e.FieldID);
+                PageHelper.OpenPage?.Invoke(PageHelper.CurrPage ?? string.Empty);
+
+                if (e.FieldID.Equals("Building"))
                 {
-                    Game1.currentLocation.Map.Properties.Remove("CanBuildHere");
+                    ResetBlacklist();
                 }
             }
         }
-        else
-        {
-            Game1.playSound("backpackIN");
-            ConfigUtility.InitializeDefaultConfig(ModEntry.Config, e.FieldID);
-            PageHelper.OpenPage?.Invoke(PageHelper.CurrPage ?? string.Empty);
+        #endregion
 
-            if (e.FieldID.Equals("Building"))
+        #region Modify Asset Data
+        private static BuildingData ModifyBuildingData(BuildingData data, bool enableFreeBuild, bool enableInstantBuild, bool removeBuildConditions, bool enableGreenhouse)
+        {
+            // Add greenhouse first
+            if (enableGreenhouse && IsGreenhouse(data))
+            {
+                SetGreenhouseAttributes(data);
+            }
+
+            if (enableFreeBuild)
+            {
+                SetFreeBuildAttributes(data);
+            }
+
+            if (enableInstantBuild)
+            {
+                SetInstantBuildAttributes(data);
+            }
+
+            if (removeBuildConditions)
+            {
+                RemoveBuildConditions(data);
+            }
+
+            return data;
+        }
+
+        private static bool IsGreenhouse(BuildingData data)
+        {
+            return TokenParser.ParseText(data.Name) == Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name");
+        }
+
+        private static void SetGreenhouseAttributes(BuildingData data)
+        {
+            // Define greenhouse materials
+            List<BuildingMaterial> greenhouseMaterials =
+            [
+                new BuildingMaterial { ItemId = "(O)709", Amount = 100 },
+                new BuildingMaterial { ItemId = "(O)338", Amount = 20 },
+                new BuildingMaterial { ItemId = "(O)337", Amount = 10 },
+            ];
+
+            // Set greenhouse attributes
+            data.Builder = Game1.builder_robin;
+            data.BuildCost = 150000;
+            data.BuildDays = 3;
+            data.BuildMaterials = greenhouseMaterials;
+            data.BuildCondition = "PLAYER_HAS_MAIL Host ccPantry";
+        }
+
+        private static void SetFreeBuildAttributes(BuildingData data)
+        {
+            data.BuildCost = 0;
+            data.BuildMaterials = [];
+        }
+
+        private static void SetInstantBuildAttributes(BuildingData data)
+        {
+            data.MagicalConstruction = true;
+            data.BuildDays = 0;
+        }
+
+        private static void RemoveBuildConditions(BuildingData data)
+        {
+            data.BuildCondition = "";
+        }
+
+        private static HomeRenovation ModifyHomeRenovationData(HomeRenovation data, bool freeRenovations)
+        {
+            if (freeRenovations)
+            {
+                data.Price = 0;
+            }
+
+            return data;
+        }
+        #endregion
+
+        #region Activate Build Menu
+        private static void HandleBuildButtonPress(string builder)
+        {
+            if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
+            {
+                ActivateBuildAnywhereMenu(builder);
+            }
+            else if (Game1.activeClickableMenu is BuildAnywhereMenu buildAnywhereMenu)
             {
                 ResetBlacklist();
+                Game1.displayFarmer = true;
+                buildAnywhereMenu.returnToCarpentryMenu();
+                Game1.activeClickableMenu.exitThisMenu();
             }
         }
-    }
-    #endregion
-
-    #region Modify Asset Data
-    private static BuildingData ModifyBuildingData(BuildingData data, bool enableFreeBuild, bool enableInstantBuild, bool removeBuildConditions, bool enableGreenhouse)
-    {
-        // Add greenhouse first
-        if (enableGreenhouse && IsGreenhouse(data))
-            SetGreenhouseAttributes(data);
-
-        if (enableFreeBuild)
-            SetFreeBuildAttributes(data);
-
-        if (enableInstantBuild)
-            SetInstantBuildAttributes(data);
-
-        if (removeBuildConditions)
-            RemoveBuildConditions(data);
-
-        return data;
-    }
-
-    private static bool IsGreenhouse(BuildingData data)
-    {
-        return TokenParser.ParseText(data.Name) == Game1.content.LoadString("Strings\\Buildings:Greenhouse_Name");
-    }
-
-    private static void SetGreenhouseAttributes(BuildingData data)
-    {
-        // Define greenhouse materials
-        List<BuildingMaterial> greenhouseMaterials =
-        [
-            new BuildingMaterial { ItemId = "(O)709", Amount = 100 },
-            new BuildingMaterial { ItemId = "(O)338", Amount = 20 },
-            new BuildingMaterial { ItemId = "(O)337", Amount = 10 },
-        ];
-
-        // Set greenhouse attributes
-        data.Builder = Game1.builder_robin;
-        data.BuildCost = 150000;
-        data.BuildDays = 3;
-        data.BuildMaterials = greenhouseMaterials;
-        data.BuildCondition = "PLAYER_HAS_MAIL Host ccPantry";
-    }
-
-    private static void SetFreeBuildAttributes(BuildingData data)
-    {
-        data.BuildCost = 0;
-        data.BuildMaterials = [];
-    }
-
-    private static void SetInstantBuildAttributes(BuildingData data)
-    {
-        data.MagicalConstruction = true;
-        data.BuildDays = 0;
-    }
-
-    private static void RemoveBuildConditions(BuildingData data)
-    {
-        data.BuildCondition = "";
-    }
-
-    private static HomeRenovation ModifyHomeRenovationData(HomeRenovation data, bool freeRenovations)
-    {
-        if (freeRenovations)
-            data.Price = 0;
-
-        return data;
-    }
-    #endregion
-
-    #region Activate Build Menu
-    private static void HandleBuildButtonPress(string builder)
-    {
-        if (Context.IsPlayerFree && Game1.activeClickableMenu == null)
+        private static void ActivateBuildAnywhereMenu(string builder)
         {
-            ActivateBuildAnywhereMenu(builder);
-        }
-        else if (Game1.activeClickableMenu is BuildAnywhereMenu buildAnywhereMenu)
-        {
-            ResetBlacklist();
-            Game1.displayFarmer = true;
-            buildAnywhereMenu.returnToCarpentryMenu();
-            Game1.activeClickableMenu.exitThisMenu();
-        }
-    }
-    private static void ActivateBuildAnywhereMenu(string builder)
-    {
-        if (!Game1.currentLocation.IsOutdoors && !ModEntry.Config.EnableBuildingIndoors)
-        {
-            Game1.addHUDMessage(new HUDMessage(I18n.Message("NoBuildingIndoors"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
-            return;
-        }
-
-        bool magicInkCheck = !((Game1.GetPlayer(Game1.player.UniqueMultiplayerID, onlyOnline: true) ?? Game1.MasterPlayer).hasMagicInk || ModEntry.Config.BypassMagicInk);
-
-        if (builder == "Wizard" && magicInkCheck && !ModEntry.Config.EnableInstantBuild)
-        {
-            Game1.addHUDMessage(new HUDMessage(I18n.Message("NoMagicInk"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
-            return;
-        }
-
-        if (!Game1.currentLocation.IsBuildableLocation())
-        {
-            Game1.currentLocation.Map.Properties.Add("CanBuildHere", "T");
-            Game1.currentLocation.isAlwaysActive.Value = true;
-        }
-
-        if (Game1.player.currentLocation.uniqueName.Value != null)
-        {
-            Game1.addHUDMessage(new HUDMessage(I18n.Message("NoBuildingInInstancedLocations"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
-        }
-
-        Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
-    }
-
-    #endregion
-
-    #region Activate Cabin Menu
-    private static void HandleCabinMenuButtonPress()
-    {
-        if (!Context.IsPlayerFree || Game1.activeClickableMenu != null) 
-            return;
-        List<Response> options = [];
-
-        if (Game1.IsMasterGame && CabinUtility.HasCabinsToUpgrade())
-            options.Add(new Response("AA_Upgrade", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_UpgradeCabin")));
-
-        if (Game1.IsMasterGame && CabinUtility.HasCabinsToUpgrade(true))
-            options.Add(new Response("AA_Renovate", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_RenovateCabin")));
-
-        options.Add(new Response("Leave", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_Leave")));
-
-        Game1.player.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu"), [.. options], (_, answer) =>
-        {
-            switch (answer)
+            if (!Game1.currentLocation.IsOutdoors && !ModEntry.Config.EnableBuildingIndoors)
             {
-                case "AA_Upgrade":
-                    UpgradeHelper.UpgradeCabinsResponses();
-                    break;
-                case "AA_Renovate":
-                    RenovationHelper.RenovateCabinsResponses();
-                    break;
-                default:
-                    Game1.player.currentLocation.answerDialogueAction("carpenter_" + answer, null);
-                    break;
+                Game1.addHUDMessage(new HUDMessage(I18n.Message("NoBuildingIndoors"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                return;
             }
-        });
-    }
-    #endregion
 
-    #region Blacklist
-    internal static void ResetBlacklist(bool setAlwaysActive = false)
-    {
-        foreach (GameLocation location in Game1.locations)
-        {
-            if (location.buildings.Count != 0)
+            bool magicInkCheck = !((Game1.GetPlayer(Game1.player.UniqueMultiplayerID, onlyOnline: true) ?? Game1.MasterPlayer).hasMagicInk || ModEntry.Config.BypassMagicInk);
+
+            if (builder == "Wizard" && magicInkCheck && !ModEntry.Config.EnableInstantBuild)
             {
-                if (!location.Map.Properties.TryGetValue("CanBuildHere", out var value) || value != "T")
+                Game1.addHUDMessage(new HUDMessage(I18n.Message("NoMagicInk"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+                return;
+            }
+
+            if (!Game1.currentLocation.IsBuildableLocation())
+            {
+                Game1.currentLocation.Map.Properties.Add("CanBuildHere", "T");
+                Game1.currentLocation.isAlwaysActive.Value = true;
+            }
+
+            if (Game1.player.currentLocation.uniqueName.Value != null)
+            {
+                Game1.addHUDMessage(new HUDMessage(I18n.Message("NoBuildingInInstancedLocations"), HUDMessage.error_type) { timeLeft = HUDMessage.defaultTime });
+            }
+
+            Game1.activeClickableMenu = new BuildAnywhereMenu(builder, Game1.player.currentLocation);
+        }
+
+        #endregion
+
+        #region Activate Cabin Menu
+        private static void HandleCabinMenuButtonPress()
+        {
+            if (!Context.IsPlayerFree || Game1.activeClickableMenu != null)
+            {
+                return;
+            }
+
+            List<Response> options = [];
+
+            if (Game1.IsMasterGame && CabinUtility.HasCabinsToUpgrade())
+            {
+                options.Add(new Response("AA_Upgrade", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_UpgradeCabin")));
+            }
+
+            if (Game1.IsMasterGame && CabinUtility.HasCabinsToUpgrade(true))
+            {
+                options.Add(new Response("AA_Renovate", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_RenovateCabin")));
+            }
+
+            options.Add(new Response("Leave", Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_Leave")));
+
+            Game1.player.currentLocation.createQuestionDialogue(Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu"), [.. options], (_, answer) =>
+            {
+                switch (answer)
                 {
-                    if (ModEntry.Config.BlacklistedLocations!.Contains(location.NameOrUniqueName))
-                        continue;
+                    case "AA_Upgrade":
+                        UpgradeHelper.UpgradeCabinsResponses();
+                        break;
+                    case "AA_Renovate":
+                        RenovationHelper.RenovateCabinsResponses();
+                        break;
+                    default:
+                        Game1.player.currentLocation.answerDialogueAction("carpenter_" + answer, null);
+                        break;
+                }
+            });
+        }
+        #endregion
 
-                    location.Map.Properties["CanBuildHere"] = "T";
+        #region Blacklist
+        internal static void ResetBlacklist(bool setAlwaysActive = false)
+        {
+            foreach (GameLocation location in Game1.locations)
+            {
+                if (location.buildings.Count != 0)
+                {
+                    if (!location.Map.Properties.TryGetValue("CanBuildHere", out xTile.ObjectModel.PropertyValue? value) || value != "T")
+                    {
+                        if (ModEntry.Config.BlacklistedLocations!.Contains(location.NameOrUniqueName))
+                        {
+                            continue;
+                        }
+
+                        location.Map.Properties["CanBuildHere"] = "T";
+                    }
+
+                    if (setAlwaysActive && !location.isAlwaysActive.Value)
+                    {
+                        location.isAlwaysActive.Value = true;
+                    }
                 }
 
-                if (setAlwaysActive && !location.isAlwaysActive.Value)
+                if (ModEntry.Config.BlacklistedLocations!.Contains(location.NameOrUniqueName))
                 {
-                    location.isAlwaysActive.Value = true;
+                    location.Map.Properties.Remove("CanBuildHere");
                 }
             }
-
-            if (ModEntry.Config.BlacklistedLocations!.Contains(location.NameOrUniqueName))
-            {
-                location.Map.Properties.Remove("CanBuildHere");
-            }
         }
+        #endregion
     }
-    #endregion
 }
