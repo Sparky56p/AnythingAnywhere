@@ -1,13 +1,13 @@
 {
   "Name": "Anything Anywhere",
   "Author": "Espy",
-  "Version": "1.8.2-unofficial.4-Sparky56p",
+  "Version": "1.8.2-unofficial.5-Sparky56p",
   "Description": "Build and place anything anywhere.",
   "UniqueID": "Espy.AnythingAnywhere",
   "EntryDll": "AnythingAnywhere.dll",
   "MinimumApiVersion": "4.1.0",
   "MinimumGameVersion": "1.6.13",
-    "UpdateKeys": [ "GitHub:Sparky56p/AnythingAnywhere", "Nexus:21233" ],
+    "UpdateKeys": [ "GitHub:Sparky56p/StardewValleyMods", "Nexus:21233" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu",
