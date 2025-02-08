@@ -164,6 +164,7 @@ namespace AnythingAnywhere.Framework.Patches
                             location.objects.Add(placementTile, toPlace);
                             toPlace.initializeLightSource(placementTile);
                             location.playSound("woodyStep");
+                            Game1.player.reduceActiveItemByOne();
                             return false;
                         }
                     case "(BC)254": // Ostrich Incubator
